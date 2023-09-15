@@ -2,7 +2,6 @@ import { InMemorySigner, importKey } from "@taquito/signer";
 import { MichelsonMap, TezosToolkit } from "@taquito/taquito";
 import * as dotenv from "dotenv";
 import code from "../compiled/main.json";
-import metadata from "./metadata.json";
 import { outputFile } from "fs-extra";
 import { char2Bytes } from "@taquito/utils";
 
@@ -32,13 +31,9 @@ const deploy = async () => {
     Tezos.setSignerProvider(new InMemorySigner(privateKey));
 
     const initialStorage = {
-      admin: publicKey,
-      winner: null,
-      numbers: new MichelsonMap(),
-      metadata: MichelsonMap.fromLiteral({
-        "": char2Bytes("tezos-storage:jsonfile"),
-        jsonfile: char2Bytes(JSON.stringify(metadata)),
-      }),
+      admins: new MichelsonMap(),
+      blacklist: new MichelsonMap(),
+      whitelist: [],
     };
 
     const origination = await Tezos.contract.originate({
@@ -47,7 +42,7 @@ const deploy = async () => {
     });
     await origination.confirmation();
     const contract = await origination.contract();
-    // console.log(`Operation Hash: ${origination.hash}`);
+
     console.log(`Contract Address: ${contract.address}`);
     saveContractAddress("deployed_contract", contract.address);
   } catch (err) {

@@ -13,7 +13,7 @@ type parameter =
    SetAdmin of address
   | RemoveAdmin of address
   | BanCreator of address
-//   | AcceptAdmin of address
+  | AcceptAdmin
   | Whitelist
 
 type return = operation list * storage
@@ -39,12 +39,12 @@ let remove_admin (n : address) (store : storage) : storage =
             failwith "Only admins" 
 
 
-// let accept_admin (store : storage) : storage =
-//     let is_find = Map.find_opt (Tezos.get_sender()) store.admins in
-//         match is_find with
-//         | Some true -> let updated_admins = Map.add (Tezos.get_sender()) true store.admins in
-//         { store with admins = updated_admins }
-//         | None false -> failwith "Address not found" 
+let accept_admin (store : storage) : storage =
+    let is_find = Map.find_opt (Tezos.get_sender()) store.admins in
+        match is_find with
+        | Some _true -> let updated_admins = Map.add (Tezos.get_sender()) true store.admins in
+        { store with admins = updated_admins }
+        | None _false -> failwith "Address not found" 
 
 
 let ban_creator (n : address) (store : storage) : storage = 
@@ -77,7 +77,7 @@ let main (action : parameter) ( store : storage) : return =
         | SetAdmin (n) -> set_admin n store
         | RemoveAdmin (n) -> remove_admin n store
         | BanCreator (n) -> ban_creator n store
-        // | AcceptAdmin -> accept_admin 
+        | AcceptAdmin -> accept_admin store
         | Whitelist -> participation store
     
     )

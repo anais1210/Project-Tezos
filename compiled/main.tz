@@ -1,100 +1,128 @@
 { parameter
-    (or (or (address %banCreator) (address %removeAdmin))
-        (or (address %setAdmin) (unit %whitelist))) ;
+    (or (or (or (unit %acceptAdmin) (address %banCreator))
+            (or (address %removeAdmin) (address %setAdmin)))
+        (unit %whitelist)) ;
   storage
     (pair (pair (map %admins address bool) (map %blacklist address bool))
           (set %whitelist address)) ;
   code { UNPAIR ;
          IF_LEFT
            { IF_LEFT
-               { DUP 2 ;
-                 CAR ;
-                 CAR ;
-                 SENDER ;
-                 GET ;
-                 IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
-                 IF { DUP 2 ;
-                      CAR ;
-                      CDR ;
-                      DUP 2 ;
-                      GET ;
-                      IF_NONE
-                        { DUP 2 ;
-                          DUP 3 ;
-                          CAR ;
-                          DIG 3 ;
+               { IF_LEFT
+                   { DROP ;
+                     DUP ;
+                     CAR ;
+                     CAR ;
+                     SENDER ;
+                     GET ;
+                     IF_NONE
+                       { DROP ; PUSH string "Address not found" ; FAILWITH }
+                       { DROP ;
+                         DUP ;
+                         CAR ;
+                         CAR ;
+                         PUSH bool True ;
+                         SENDER ;
+                         PAIR 3 ;
+                         DUP 2 ;
+                         DIG 2 ;
+                         CAR ;
+                         DIG 2 ;
+                         UNPAIR 3 ;
+                         SWAP ;
+                         SOME ;
+                         SWAP ;
+                         UPDATE ;
+                         UPDATE 1 ;
+                         UPDATE 1 } }
+                   { DUP 2 ;
+                     CAR ;
+                     CAR ;
+                     SENDER ;
+                     GET ;
+                     IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
+                     IF { DUP 2 ;
                           CAR ;
                           CDR ;
-                          PUSH bool False ;
-                          DIG 4 ;
-                          SWAP ;
-                          SOME ;
-                          SWAP ;
-                          UPDATE ;
-                          UPDATE 2 ;
-                          UPDATE 1 }
-                        { DROP 2 ; PUSH string "Creator already banned" ; FAILWITH } }
-                    { DROP 2 ; PUSH string "Only admins" ; FAILWITH } }
-               { DUP 2 ;
-                 CAR ;
-                 CAR ;
-                 DUP 2 ;
-                 GET ;
-                 IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
-                 IF { DUP 2 ;
-                      DUP 3 ;
-                      CAR ;
-                      DIG 3 ;
-                      CAR ;
-                      CAR ;
-                      DIG 3 ;
-                      NONE bool ;
-                      SWAP ;
-                      UPDATE ;
-                      UPDATE 1 ;
-                      UPDATE 1 }
-                    { DROP 2 ; PUSH string "Only admins" ; FAILWITH } } }
-           { IF_LEFT
-               { DUP 2 ;
-                 CAR ;
-                 CAR ;
-                 DUP 2 ;
-                 GET ;
-                 IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
-                 IF { DUP 2 ;
-                      CAR ;
-                      CAR ;
-                      DUP 2 ;
-                      GET ;
-                      IF_NONE
-                        { DUP 2 ;
+                          DUP 2 ;
+                          GET ;
+                          IF_NONE
+                            { DUP 2 ;
+                              DUP 3 ;
+                              CAR ;
+                              DIG 3 ;
+                              CAR ;
+                              CDR ;
+                              PUSH bool False ;
+                              DIG 4 ;
+                              SWAP ;
+                              SOME ;
+                              SWAP ;
+                              UPDATE ;
+                              UPDATE 2 ;
+                              UPDATE 1 }
+                            { DROP 2 ; PUSH string "Creator already banned" ; FAILWITH } }
+                        { DROP 2 ; PUSH string "Only admins" ; FAILWITH } } }
+               { IF_LEFT
+                   { DUP 2 ;
+                     CAR ;
+                     CAR ;
+                     DUP 2 ;
+                     GET ;
+                     IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
+                     IF { DUP 2 ;
                           DUP 3 ;
                           CAR ;
                           DIG 3 ;
                           CAR ;
                           CAR ;
-                          PUSH bool True ;
-                          DIG 4 ;
-                          SWAP ;
-                          SOME ;
+                          DIG 3 ;
+                          NONE bool ;
                           SWAP ;
                           UPDATE ;
                           UPDATE 1 ;
                           UPDATE 1 }
-                        { DROP 3 ; PUSH string "Address already exist" ; FAILWITH } }
-                    { DROP 2 ; PUSH string "Only admins" ; FAILWITH } }
-               { DROP ;
-                 DUP ;
-                 CDR ;
-                 SENDER ;
-                 MEM ;
-                 IF { DROP ; PUSH string "You're already whitelisted" ; FAILWITH }
-                    { PUSH mutez 10000000 ;
-                      AMOUNT ;
-                      COMPARE ;
-                      LT ;
-                      IF { DROP ; PUSH string "Not enough for participating..." ; FAILWITH }
-                         { DUP ; CDR ; SENDER ; PUSH bool True ; SWAP ; UPDATE ; UPDATE 2 } } } } ;
+                        { DROP 2 ; PUSH string "Only admins" ; FAILWITH } }
+                   { DUP 2 ;
+                     CAR ;
+                     CAR ;
+                     DUP 2 ;
+                     GET ;
+                     IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
+                     IF { DUP 2 ;
+                          CAR ;
+                          CAR ;
+                          DUP 2 ;
+                          GET ;
+                          IF_NONE
+                            { DUP 2 ;
+                              DUP 3 ;
+                              CAR ;
+                              DIG 3 ;
+                              CAR ;
+                              CAR ;
+                              PUSH bool True ;
+                              DIG 4 ;
+                              SWAP ;
+                              SOME ;
+                              SWAP ;
+                              UPDATE ;
+                              UPDATE 1 ;
+                              UPDATE 1 }
+                            { DROP 3 ; PUSH string "Address already exist" ; FAILWITH } }
+                        { DROP 2 ; PUSH string "Only admins" ; FAILWITH } } } }
+           { DROP ;
+             DUP ;
+             CDR ;
+             SENDER ;
+             MEM ;
+             IF { DROP ; PUSH string "You're already whitelisted" ; FAILWITH }
+                { PUSH mutez 10000000 ;
+                  AMOUNT ;
+                  COMPARE ;
+                  LT ;
+                  IF { DROP ; PUSH string "Not enough for participating..." ; FAILWITH }
+                     { DUP ; CDR ; SENDER ; PUSH bool True ; SWAP ; UPDATE ; UPDATE 2 } } } ;
          NIL operation ;
          PAIR } }
 
