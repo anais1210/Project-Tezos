@@ -31,7 +31,7 @@ let (admin, user1, _user2) = Bootstrap.bootstrap_accounts() in
     let _ = Test.transfer_to_contract contr (BanCreator(user1)) 0mutez in
 
 
-let test_success_bancreator = 
+let test_fail_bancreator = 
 let (admin, user1, _user2) = Bootstrap.bootstrap_accounts() in
     let (_addr, _t_addr, contr) = Bootstrap.originate_contract(admin) in
     let () = Test.set_source admin in

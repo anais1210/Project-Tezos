@@ -5,11 +5,14 @@
   storage
     (pair (pair (map %admins address bool) (map %blacklist address bool))
           (set %whitelist address)) ;
-  code { UNPAIR ;
+  code { PUSH string "Only admin can check winner" ;
+         SWAP ;
+         UNPAIR ;
          IF_LEFT
            { IF_LEFT
                { IF_LEFT
-                   { DROP ;
+                   { DIG 2 ;
+                     DROP 2 ;
                      DUP ;
                      CAR ;
                      CAR ;
@@ -41,7 +44,9 @@
                      SENDER ;
                      GET ;
                      IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
-                     IF { DUP 2 ;
+                     IF { DIG 2 ;
+                          DROP ;
+                          DUP 2 ;
                           CAR ;
                           CDR ;
                           DUP 2 ;
@@ -62,7 +67,7 @@
                               UPDATE 2 ;
                               UPDATE 1 }
                             { DROP 2 ; PUSH string "Creator already banned" ; FAILWITH } }
-                        { DROP 2 ; PUSH string "Only admins" ; FAILWITH } } }
+                        { DROP 2 ; FAILWITH } } }
                { IF_LEFT
                    { DUP 2 ;
                      CAR ;
@@ -70,7 +75,9 @@
                      DUP 2 ;
                      GET ;
                      IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
-                     IF { DUP 2 ;
+                     IF { DIG 2 ;
+                          DROP ;
+                          DUP 2 ;
                           DUP 3 ;
                           CAR ;
                           DIG 3 ;
@@ -82,14 +89,16 @@
                           UPDATE ;
                           UPDATE 1 ;
                           UPDATE 1 }
-                        { DROP 2 ; PUSH string "Only admins" ; FAILWITH } }
+                        { DROP 2 ; FAILWITH } }
                    { DUP 2 ;
                      CAR ;
                      CAR ;
                      DUP 2 ;
                      GET ;
                      IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
-                     IF { DUP 2 ;
+                     IF { DIG 2 ;
+                          DROP ;
+                          DUP 2 ;
                           CAR ;
                           CAR ;
                           DUP 2 ;
@@ -110,8 +119,9 @@
                               UPDATE 1 ;
                               UPDATE 1 }
                             { DROP 3 ; PUSH string "Address already exist" ; FAILWITH } }
-                        { DROP 2 ; PUSH string "Only admins" ; FAILWITH } } } }
-           { DROP ;
+                        { DROP 2 ; FAILWITH } } } }
+           { DIG 2 ;
+             DROP 2 ;
              DUP ;
              CDR ;
              SENDER ;

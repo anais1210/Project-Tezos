@@ -3,22 +3,11 @@
 #import "./types.mligo" "Types"
 #import "./errors.mligo" "Errors"
 
-type storage = {
-  admins : (address, bool) map;
-  blacklist: (address, bool) map;
-  whitelist : address set;
-}
 
-type parameter =
-   SetAdmin of address
-  | RemoveAdmin of address
-  | BanCreator of address
-  | AcceptAdmin
-  | Whitelist
 
-type return = operation list * storage
+type return = operation list * Storage.t
 
-let set_admin (n : address) (store : storage) : storage =
+let set_admin (n : address) (store : Storage.t) : Storage.t =
     let is_admin = Map.find n store.admins in
         if is_admin then
             let map_opt : bool option = Map.find_opt n store.admins in
@@ -28,18 +17,18 @@ let set_admin (n : address) (store : storage) : storage =
                 let new_admin = Map.add n true store.admins in
                 { store with admins = new_admin }
         else
-            failwith "Only admins" 
+            failwith Errors.only_admin 
 
-let remove_admin (n : address) (store : storage) : storage = 
+let remove_admin (n : address) (store : Storage.t) : Storage.t = 
     let is_admin = Map.find n store.admins in
         if is_admin then
             let updated_admins = Map.remove n store.admins in
             { store with admins = updated_admins }
         else
-            failwith "Only admins" 
+            failwith Errors.only_admin  
 
 
-let accept_admin (store : storage) : storage =
+let accept_admin (store : Storage.t) : Storage.t =
     let is_find = Map.find_opt (Tezos.get_sender()) store.admins in
         match is_find with
         | Some _true -> let updated_admins = Map.add (Tezos.get_sender()) true store.admins in
@@ -47,7 +36,7 @@ let accept_admin (store : storage) : storage =
         | None _false -> failwith "Address not found" 
 
 
-let ban_creator (n : address) (store : storage) : storage = 
+let ban_creator (n : address) (store : Storage.t) : Storage.t = 
     let is_admin = Map.find (Tezos.get_sender()) store.admins in
         if is_admin then
             let is_banned = Map.find_opt n store.blacklist in
@@ -59,10 +48,10 @@ let ban_creator (n : address) (store : storage) : storage =
                     let updated_blacklist = Map.add n false store.blacklist in
                     { store with blacklist = updated_blacklist }
         else
-            failwith "Only admins"
+            failwith Errors.only_admin 
 
 
-let participation (store :storage): storage = 
+let participation (store :Storage.t): Storage.t = 
     let is_whitelisted = Set.mem (Tezos.get_sender()) store.whitelist in
     if is_whitelisted
         then failwith "You're already whitelisted" 
@@ -72,7 +61,7 @@ let participation (store :storage): storage =
             let updated_set = Set.add (Tezos.get_sender()) store.whitelist in
     { store with whitelist = updated_set }
 
-let main (action : parameter) ( store : storage) : return =
+let main (action : Parameter.t) ( store : Storage.t) : return =
     ([] : operation list), (match action with
         | SetAdmin (n) -> set_admin n store
         | RemoveAdmin (n) -> remove_admin n store
