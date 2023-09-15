@@ -24,9 +24,7 @@ let check_winner (n : nat) (store : Storage.t) : Storage.t =
     match map_opt with
         | None -> failwith Errors.number_not_picked
         | Some (n) -> { store with winner = Some(n) }
-
-
- 
+        
 
 let main (action : Parameter.t) ( store : Storage.t) : return =
     ([] : operation list), (match action with

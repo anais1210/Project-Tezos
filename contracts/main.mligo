@@ -1,3 +1,8 @@
+#import "./storage.mligo" "Storage"
+#import "./parameter.mligo" "Parameter"
+#import "./types.mligo" "Types"
+#import "./errors.mligo" "Errors"
+
 type storage = {
   admins : (address, bool) map;
   blacklist: (address, bool) map;
@@ -5,12 +10,13 @@ type storage = {
 }
 
 type parameter =
-  | SetAdmin of address
+   SetAdmin of address
   | RemoveAdmin of address
   | BanCreator of address
   | AcceptAdmin of address
+  | Whitelist of address
 
-  type return = operation list * storage
+type return = operation list * storage
 
 let set_admin (n : address) (store : storage) : storage =
     let is_admin = Map.find n store.admins in
@@ -55,6 +61,7 @@ let ban_creator (n : address) (amount : tez) (store : storage) : storage =
         else
             failwith "Only admins"
 
+
 let participation (amount : tez)(store :storage): storage = 
     if is_whitelisted = Set.mem Tezos.get_sender() whitelist
         then failwith "You're already whitelisted"
@@ -63,8 +70,6 @@ let participation (amount : tez)(store :storage): storage =
         else 
             let updated_set = Set.add Tezos.get_sender() whitelist in
             updated_set
-    
-
 
 
 let main (action : parameter) ( store : storage) : return =

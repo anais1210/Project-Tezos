@@ -10,7 +10,6 @@ type originated = (
 )
 
 let bootstrap_accounts () = 
-// creation de 5 compte
     let () = Test.reset_state 5n ([] : tez list ) in
     let accounts = 
         Test.nth_bootstrap_account 1,
@@ -20,11 +19,10 @@ let bootstrap_accounts () =
     accounts
 
 
-let initial_storage (initial_admin:address)= {
-    admins = (Map.empty : Types.admin_list);
-    // user = (Map.empty : Types.user);
-    // numbers =(Map.empty : Types.numbers);
-    // metadata = (Big_map.empty : Types.metadata);
+let initial_storage (initial_admin: Types.admin_list)= {
+    admins = initial_admin;
+    blacklist = (Map.empty : Types.blacklist)
+    whitelist = (None: set)
 }
 let initial_balance = 0mutez
 
