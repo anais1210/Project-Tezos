@@ -33,8 +33,12 @@ let set_admin (n : address) (store : storage) : storage =
         { store with admins = new_admin }
 
 let remove_admin (n : address) (store : storage) : storage = 
-   let updated_admins = Map.remove n store.admins in
-    { store with admins = updated_admins }
+    let is_admin = Map.find n store.admins in
+        if is_admin then
+            let updated_admins = Map.remove n store.admins in
+            { store with admins = updated_admins }
+        else
+            failwith "Only admins can remove admins"
 
 
 let main (action : parameter) ( store : storage) : return =
