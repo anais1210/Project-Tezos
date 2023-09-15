@@ -2,13 +2,23 @@
   storage (map address bool) ;
   code { UNPAIR ;
          IF_LEFT
-           { NONE bool ; SWAP ; UPDATE }
            { DUP 2 ;
              DUP 2 ;
              GET ;
-             IF_NONE
-               { SWAP ; PUSH bool True ; DIG 2 ; SWAP ; SOME ; SWAP ; UPDATE }
-               { DROP 3 ; PUSH string "Address already exist" ; FAILWITH } } ;
+             IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
+             IF { NONE bool ; SWAP ; UPDATE }
+                { DROP 2 ; PUSH string "Only admins can remove admins" ; FAILWITH } }
+           { DUP 2 ;
+             DUP 2 ;
+             GET ;
+             IF_NONE { PUSH string "MAP FIND" ; FAILWITH } {} ;
+             IF { DUP 2 ;
+                  DUP 2 ;
+                  GET ;
+                  IF_NONE
+                    { SWAP ; PUSH bool True ; DIG 2 ; SWAP ; SOME ; SWAP ; UPDATE }
+                    { DROP 3 ; PUSH string "Address already exist" ; FAILWITH } }
+                { DROP 2 ; PUSH string "Only admins can remove admins" ; FAILWITH } } ;
          NIL operation ;
          PAIR } }
 
