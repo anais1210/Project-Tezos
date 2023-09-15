@@ -4,7 +4,6 @@
 #import "./errors.mligo" "Errors"
 
 
-
 type return = operation list * Storage.t
 
 let set_admin (n : address) (store : Storage.t) : Storage.t =
@@ -31,7 +30,7 @@ let remove_admin (n : address) (store : Storage.t) : Storage.t =
 let accept_admin (store : Storage.t) : Storage.t =
     let is_find = Map.find_opt (Tezos.get_sender()) store.admins in
         match is_find with
-        | Some _true -> let updated_admins = Map.add (Tezos.get_sender()) true store.admins in
+        | Some (_) -> let updated_admins = Map.add (Tezos.get_sender()) true store.admins in
         { store with admins = updated_admins }
         | None _false -> failwith "Address not found" 
 
@@ -41,7 +40,7 @@ let ban_creator (n : address) (store : Storage.t) : Storage.t =
         if is_admin then
             let is_banned = Map.find_opt n store.blacklist in
                 match is_banned with
-                | Some _false -> failwith "Creator already banned" 
+                | Some (_) -> failwith "Creator already banned" 
                     (* Creator is banned, no need to update *)
                     store
                 | None _ ->
