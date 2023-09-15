@@ -1,1 +1,1 @@
-export default "KT1WG4eXNDFFkmSps79raDWEKvwp6QPWixav"
+export default "KT1XrE4KqdurWtFB8cmvahFoceZ37gjsANVH"

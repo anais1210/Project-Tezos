@@ -31,7 +31,11 @@ const deploy = async () => {
     Tezos.setSignerProvider(new InMemorySigner(privateKey));
 
     const initialStorage = {
+      ultime_admin: publicKey,
       admins: new MichelsonMap(),
+      //   admins: MichelsonMap.fromLiteral({
+      //     publicKey: true,
+      //   }),
       blacklist: new MichelsonMap(),
       whitelist: [],
     };

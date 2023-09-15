@@ -19,16 +19,17 @@ let bootstrap_accounts () =
     accounts
 
 
-let initial_storage (initial_admin: Types.admin_list)= {
-    admins = initial_admin;
-    // blacklist = (Map.empty : Types.blacklist)
-    // whitelist = (None: set)
+let initial_storage (initial_admin: address)= {
+    ultime_admin = initial_admin
+    admins = (Map.empty : Types.admin_list)
+    blacklist = (Map.empty : Types.blacklist)
+    whitelist = (None: set)
 }
 let initial_balance = 0mutez
 
 let originate_contract (admin : address) : originated = 
     let init_storage = (Test.eval (initial_storage(admin))) in
-    let (_admin, _user1, _user2) = bootstrap_accounts() in
+    let (_admins, _user1, _user2) = bootstrap_accounts() in
     let (typed_address, _code , _nonce) = Test.originate Contract.main (initial_storage(admin)) initial_balance in
     let actual_storage = Test.get_storage typed_address in
     let () = assert(initial_storage(admin) = actual_storage) in
