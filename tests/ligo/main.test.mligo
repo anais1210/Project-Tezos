@@ -24,6 +24,10 @@ let test_failure_setadmin_duplicateadmin =
         | Success (_) -> failwith("Test should have failed")
     ()
 
+let test_failure_notadmin =
+    let (admin, user1, _user2) = Bootstrap.bootstrap_accounts() in
+    let (_addr, _t_addr, contr) = Bootstrap.originate_contract(admin) in
+
 
 let test_failure_submitnumber_admincannotplay =
     let (admin, _user1, _user2) = Bootstrap.bootstrap_accounts() in
