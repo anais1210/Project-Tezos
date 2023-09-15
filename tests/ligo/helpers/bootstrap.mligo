@@ -17,15 +17,14 @@ let bootstrap_accounts () =
         Test.nth_bootstrap_account 2,
         Test.nth_bootstrap_account 3
     in
-    // on retourne accounts ici
     accounts
 
 
 let initial_storage (initial_admin:address)= {
-    admin = (Map.empty : Types.admin_list);
-    user = (Map.empty : Types.user);
-    numbers =(Map.empty : Types.numbers);
-    metadata = (Big_map.empty : Types.metadata);
+    admins = (Map.empty : Types.admin_list);
+    // user = (Map.empty : Types.user);
+    // numbers =(Map.empty : Types.numbers);
+    // metadata = (Big_map.empty : Types.metadata);
 }
 let initial_balance = 0mutez
 

@@ -5,6 +5,7 @@
 
 type return = operation list * Storage.t
 
+type numbers = (nat, address) map
 
 let submit_number (n : nat) (store : Storage.t) : Storage.t =
     let () = if (Tezos.get_sender() = store.admin) then (failwith Errors.admin_can_not_play) in

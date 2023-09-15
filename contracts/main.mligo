@@ -4,12 +4,16 @@ type storage = {
 
 type parameter =
   | SetAdmin of address
+  | RemoveAdmin of address
 
   type return = operation list * storage
 
+
+let check_admin (n: address)(store: storage) : storage = 
+
+
+
 let set_admin (n : address) (store : storage) : storage =
-    // let () = if (Tezos.get_sender() = store.admin) then (failwith Errors.admin_can_not_play) in
-    // let () = if (n < 1n) || (n > 100n) then (failwith Errors.number_out_of_bounds) in
     let map_opt : bool option = Map.find_opt n store.admins in
     match map_opt with
         | Some (_) -> failwith "Address already exist"
@@ -17,7 +21,11 @@ let set_admin (n : address) (store : storage) : storage =
         let new_admin = Map.add n true store.admins in
         { store with admins = new_admin }
 
+let remove_admin (n : address) (store : storage) : storage = 
+    let updated_map = Map.remove n store.admins in
+
 
 let main (action : parameter) ( store : storage) : return =
     ([] : operation list), (match action with
-        | SetAdmin (n) -> set_admin n store)
+        | SetAdmin (n) -> set_admin n store
+        | RemoveAdmin (n) -> remove_admin n store)
