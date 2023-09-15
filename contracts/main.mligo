@@ -1,7 +1,7 @@
 type storage = {
   admins : (address, bool) map;
-  creator: address;
   blacklist: (address, bool) map;
+  whitelist : address set;
 }
 
 type parameter =
@@ -32,6 +32,7 @@ let remove_admin (n : address) (store : storage) : storage =
         else
             failwith "Only admins"
 
+
 let accept_admin (store : storage) : storage =
     let is_find = Map.find_opt Tezos.get_sender() store.admins in
         match is_find with
@@ -40,7 +41,7 @@ let accept_admin (store : storage) : storage =
         | None false -> failwith "Address not found"
 
 
-let ban_creator (n : address) (store : storage) : storage = 
+let ban_creator (n : address) (amount : tez) (store : storage) : storage = 
     let is_admin = Map.find Tezos.get_sender() store.admins in
         if is_admin then
             let is_banned = Map.find_opt n store.blacklist in
@@ -52,7 +53,17 @@ let ban_creator (n : address) (store : storage) : storage =
                     let updated_blacklist = Map.add n false store.blacklist in
                     { store with blacklist = updated_blacklist }
         else
-      failwith "Only admins"
+            failwith "Only admins"
+
+let participation (amount : tez)(store :storage): storage = 
+    if is_whitelisted = Set.mem Tezos.get_sender() whitelist
+        then failwith "You're already whitelisted"
+    else
+        if (amount < 10tez ) then failwith "Not enough for participating..."
+        else 
+            let updated_set = Set.add Tezos.get_sender() whitelist in
+            updated_set
+    
 
 
 
@@ -62,4 +73,5 @@ let main (action : parameter) ( store : storage) : return =
         | RemoveAdmin (n) -> remove_admin n store
         | BanCreator (n) -> ban_creator n store
         | AcceptAdmin -> accept_admin 
+        | Whitelist (n) -> participation n store
         )
