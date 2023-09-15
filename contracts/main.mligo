@@ -11,7 +11,7 @@ let set_admin (n : address) (store : Storage.t) : Storage.t =
         if is_admin then
             let map_opt : bool option = Map.find_opt n store.admins in
             match map_opt with
-                | Some (_) -> failwith "Address already exist"
+                | Some (_) -> failwith Errors.address_already_exist
                 | None -> 
                 let new_admin = Map.add n true store.admins in
                 { store with admins = new_admin }
@@ -25,7 +25,7 @@ let remove_admin (n : address) (store : Storage.t) : Storage.t =
                 match map_opt with
                 | Some (_) -> let updated_admins = Map.remove n store.admins in
             { store with admins = updated_admins }
-                | None -> failwith "This address is not an admin"
+                | None -> failwith Errors.only_admin
                
             
         else
@@ -37,7 +37,7 @@ let accept_admin (store : Storage.t) : Storage.t =
         match is_find with
         | Some (_) -> let updated_admins = Map.add (Tezos.get_sender()) true store.admins in
         { store with admins = updated_admins }
-        | None _false -> failwith "Address not found" 
+        | None _false -> failwith Errors.address_not_found
 
 
 let ban_creator (n : address) (store : Storage.t) : Storage.t = 
@@ -45,7 +45,7 @@ let ban_creator (n : address) (store : Storage.t) : Storage.t =
         if is_admin then
             let is_banned = Map.find_opt n store.blacklist in
                 match is_banned with
-                | Some (_) -> failwith "Creator already banned" 
+                | Some (_) -> failwith Errors.creator_banned
                     (* Creator is banned, no need to update *)
                     // store
                 | None _ ->

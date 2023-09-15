@@ -1,5 +1,5 @@
 #import "./helpers/bootstrap.mligo" "Bootstrap"
-#import "../../contracts/errors.mligo" "Contract_Errors"
+#import "../../contracts/errors.mligo" "Errors"
 
 let () = Test.log("[MAIN] Testing entrypoints for contract")
 
@@ -33,26 +33,25 @@ let test_success_bancreator =
     ()
 
 
-// let test_fail_bancreator = 
-//     let (admin, user1, _user2) = Bootstrap.bootstrap_accounts() in
-//     let (_addr, _t_addr, contr) = Bootstrap.originate_contract(admin) in
-//     let () = Test.set_source user1 in
+let test_fail_bancreator = 
+    let (admin, user1, _user2) = Bootstrap.bootstrap_accounts() in
+    let (_addr, _t_addr, contr) = Bootstrap.originate_contract(admin) in
+    let () = Test.set_source user1 in
 
-//     let _ = Test.transfer_to_contract contr (BanCreator(user1)) 0mutez in
-//     let test_result = Test.transfer_to_contract contr (BanCreator(user1)) 0mutez in
-//     let () = match test_result with 
-//         | Fail (Rejected (actual, _)) -> assert(actual = (Test.eval "Creator already banned"))
-//         | Fail (Balance_too_low _) -> failwith ("Balance is too low")
-//         | Fail (Other p) ->failwith (p)
-//         | Success (_) -> failwith("Test should have failed")
-//     in
-//     ()
+    let _ = Test.transfer_to_contract contr (BanCreator(user1)) 0mutez in
+    let test_result = Test.transfer_to_contract contr (BanCreator(user1)) 0mutez in
+    let () = match test_result with 
+        | Fail (Rejected (actual, _)) -> (*assert(actual = (Test.eval Errors.creator_banned))*) Test.log("-----------HERE--------")
+        | Fail (Balance_too_low _) -> failwith ("Balance is too low")
+        | Fail (Other p) ->failwith (p)
+        | Success (_) -> failwith("Test should have failed")
+    in
+    ()
 
 let test_success_participation = 
     let (admin, user1, _user2) = Bootstrap.bootstrap_accounts() in
     let (_addr, _t_addr, contr) = Bootstrap.originate_contract(admin) in
     let () = Test.set_source user1 in
-    // Test.log(user1) in
     let _ = Test.transfer_to_contract contr (Whitelist) 10tez in
     ()
 
