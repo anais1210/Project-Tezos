@@ -4,6 +4,7 @@
         (unit %whitelist)) ;
   storage
     (pair (pair (map %admins address bool) (map %blacklist address bool))
+          (address %ultime_admin)
           (set %whitelist address)) ;
   code { PUSH string "Only admin can check winner" ;
          SWAP ;
@@ -78,17 +79,25 @@
                      IF { DIG 2 ;
                           DROP ;
                           DUP 2 ;
-                          DUP 3 ;
-                          CAR ;
-                          DIG 3 ;
                           CAR ;
                           CAR ;
-                          DIG 3 ;
-                          NONE bool ;
-                          SWAP ;
-                          UPDATE ;
-                          UPDATE 1 ;
-                          UPDATE 1 }
+                          DUP 2 ;
+                          GET ;
+                          IF_NONE
+                            { DROP 2 ; PUSH string "This address is not an admin" ; FAILWITH }
+                            { DROP ;
+                              DUP 2 ;
+                              DUP 3 ;
+                              CAR ;
+                              DIG 3 ;
+                              CAR ;
+                              CAR ;
+                              DIG 3 ;
+                              NONE bool ;
+                              SWAP ;
+                              UPDATE ;
+                              UPDATE 1 ;
+                              UPDATE 1 } }
                         { DROP 2 ; FAILWITH } }
                    { DUP 2 ;
                      CAR ;
@@ -124,6 +133,7 @@
              DROP 2 ;
              DUP ;
              CDR ;
+             CDR ;
              SENDER ;
              MEM ;
              IF { DROP ; PUSH string "You're already whitelisted" ; FAILWITH }
@@ -132,7 +142,21 @@
                   COMPARE ;
                   LT ;
                   IF { DROP ; PUSH string "Not enough for participating..." ; FAILWITH }
-                     { DUP ; CDR ; SENDER ; PUSH bool True ; SWAP ; UPDATE ; UPDATE 2 } } } ;
+                     { DUP ;
+                       CDR ;
+                       CDR ;
+                       SENDER ;
+                       PAIR ;
+                       DUP 2 ;
+                       DIG 2 ;
+                       CDR ;
+                       DIG 2 ;
+                       UNPAIR ;
+                       PUSH bool True ;
+                       SWAP ;
+                       UPDATE ;
+                       UPDATE 2 ;
+                       UPDATE 2 } } } ;
          NIL operation ;
          PAIR } }
 

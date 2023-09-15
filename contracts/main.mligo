@@ -21,8 +21,13 @@ let set_admin (n : address) (store : Storage.t) : Storage.t =
 let remove_admin (n : address) (store : Storage.t) : Storage.t = 
     let is_admin = Map.find n store.admins in
         if is_admin then
-            let updated_admins = Map.remove n store.admins in
+            let map_opt : bool option = Map.find_opt n store.admins in
+                match map_opt with
+                | Some (_) ->  let updated_admins = Map.remove n store.admins in
             { store with admins = updated_admins }
+                | None -> failwith "This address is not an admin"
+               
+        
         else
             failwith Errors.only_admin  
 
