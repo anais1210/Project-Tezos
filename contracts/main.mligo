@@ -47,7 +47,7 @@ let ban_creator (n : address) (store : Storage.t) : Storage.t =
                 match is_banned with
                 | Some (_) -> failwith "Creator already banned" 
                     (* Creator is banned, no need to update *)
-                    store
+                    // store
                 | None _ ->
                     let updated_blacklist = Map.add n false store.blacklist in
                     { store with blacklist = updated_blacklist }
