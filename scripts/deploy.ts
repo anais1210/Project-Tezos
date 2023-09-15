@@ -4,16 +4,17 @@ import * as dotenv from "dotenv";
 import code from "../compiled/main.json";
 import { outputFile } from "fs-extra";
 import { char2Bytes } from "@taquito/utils";
+import networks from "../config";
+import accounts from "../accounts";
 
 dotenv.config({ path: ".env" });
-const TezosNodeRPC: string = process.env.TEZOS_NODE_URL;
-const privateKey: string = process.env.ALICE_PRIVATE_KEY;
-const publicKey: string = process.env.ALICE_PUBLIC_KEY;
+const TezosNodeRPC: string = networks.ghostnet.node_url;
+const publicKey: string = accounts.sandbox.alice.publicKey;
+const privateKey: string = accounts.sandbox.alice.privateKey;
 
 const signature = new InMemorySigner(privateKey);
 const Tezos = new TezosToolkit(TezosNodeRPC);
 Tezos.setProvider({ signer: signature });
-// resultat en micro tez --> divise par 1M pour avoir des tez
 Tezos.tz
   .getBalance(publicKey)
   .then((balance) =>
