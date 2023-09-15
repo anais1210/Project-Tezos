@@ -1,0 +1,12 @@
+{ parameter address ;
+  storage (map address bool) ;
+  code { UNPAIR ;
+         DUP 2 ;
+         DUP 2 ;
+         GET ;
+         IF_NONE
+           { SWAP ; PUSH bool True ; DIG 2 ; SWAP ; SOME ; SWAP ; UPDATE }
+           { DROP 3 ; PUSH string "Address already exist" ; FAILWITH } ;
+         NIL operation ;
+         PAIR } }
+

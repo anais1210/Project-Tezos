@@ -1,18 +1,23 @@
-#import "./storage.mligo" "Storage"
+type storage = {
+  admins : (address, bool) map;
+}
 
+type parameter =
+  | SetAdmin of address
 
-let add_admin (addr : address ) (store : Storage.t) : Storage.t =
-    let () = if (store.admin <> Tezos.get_sender()) then (failwith Errors.only_admin) in
-    let map_opt : address option = Map.find_opt addr store.admin in
+  type return = operation list * storage
+
+let set_admin (n : address) (store : storage) : storage =
+    // let () = if (Tezos.get_sender() = store.admin) then (failwith Errors.admin_can_not_play) in
+    // let () = if (n < 1n) || (n > 100n) then (failwith Errors.number_out_of_bounds) in
+    let map_opt : bool option = Map.find_opt n store.admins in
     match map_opt with
-        | Some (_) -> failwith ("Admin already existing")
+        | Some (_) -> failwith "Address already exist"
         | None -> 
-        let new_admin = Map.add addr (Tezos.get_sender()) store.admin in
-        { store with amdin = new_admin }
+        let new_admin = Map.add n true store.admins in
+        { store with admins = new_admin }
 
 
-let main (action : Parameter.t) ( store : Storage.t) : return =
+let main (action : parameter) ( store : storage) : return =
     ([] : operation list), (match action with
-        | SubmitNumber (n) -> submit_number n store
-        | CheckWinner (n) -> check_winner n store)
-
+        | SetAdmin (n) -> set_admin n store)

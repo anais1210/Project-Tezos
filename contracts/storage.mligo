@@ -1,7 +1,7 @@
 #import "./types.mligo" "Types"
 type t = {
     admin: Types.admin_list;
-    users: address;
-    whitelist : Types.whitelist
-
+    // users: address set;
+    // whitelist : Types.whitelist;
+    // users : Types.users
 }

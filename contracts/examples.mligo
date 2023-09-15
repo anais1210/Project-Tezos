@@ -18,7 +18,6 @@ let submit_number (n : nat) (store : Storage.t) : Storage.t =
 
  
 let check_winner (n : nat) (store : Storage.t) : Storage.t =
-
     let () = if (store.admin <> Tezos.get_sender()) then (failwith Errors.only_admin) in
     let map_opt : address option = Map.find_opt n store.numbers in
     match map_opt with
