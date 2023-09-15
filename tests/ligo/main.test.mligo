@@ -17,7 +17,7 @@ let test_failure_setadmin_duplicateadmin =
     let () = Test.set_source admin in
     let _ = Test.transfer_to_contract contr (SetAdmin(user1)) 0mutez in
     let test_result = Test.transfer_to_contract contr (SetAdmin(user1)) 0mutez in
-    let match () = test_result with 
+    let () = test_result with 
         | Fail (Rejected (actual, _)) -> assert(actual = (Test.eval "Address already exist"))
         | Fail (Balance_too_low _) -> failwith ("Balance is too low")
         | Fail (Other p) failwith (p)
