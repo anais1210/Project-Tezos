@@ -21,8 +21,8 @@ let bootstrap_accounts () =
 
 let initial_storage (initial_admin: Types.admin_list)= {
     admins = initial_admin;
-    blacklist = (Map.empty : Types.blacklist)
-    whitelist = (None: set)
+    // blacklist = (Map.empty : Types.blacklist)
+    // whitelist = (None: set)
 }
 let initial_balance = 0mutez
 
